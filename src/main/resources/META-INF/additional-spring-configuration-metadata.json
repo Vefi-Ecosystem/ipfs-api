@@ -1,0 +1,14 @@
+{
+  "properties": [
+    {
+      "name": "ipfs.host",
+      "type": "java.lang.String",
+      "description": "Host for IPFS node."
+    },
+    {
+      "name": "ipfs.port",
+      "type": "java.lang.Integer",
+      "description": "Port the IPFS node is running on."
+    }
+  ]
+}

@@ -1,1 +1,1 @@
-prettier --write **/**/*.{java,xml}
+prettier --write **/**/*.{java,json,xml}

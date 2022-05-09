@@ -3,9 +3,15 @@ package org.vefi.ipfs.service;
 import io.ipfs.api.IPFS;
 import io.ipfs.api.MerkleNode;
 import io.ipfs.api.NamedStreamable;
+import io.ipfs.multihash.Multihash;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.time.LocalDate;
 import java.util.Map;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,13 +37,41 @@ public class IPFSService implements IPFSServiceImpl {
 
   @Override
   public String saveJson(Map<String, Object> json) {
-    // TODO Auto-generated method stub
-    return null;
+    try {
+      String content = mapToString(json);
+      LocalDate now = LocalDate.now();
+      String name = (String) json.get("name");
+      Path utfFile = Files.createTempFile(String.format("%d-%s", now.toEpochDay(), name), ".json");
+
+      Files.write(utfFile, content.getBytes(StandardCharsets.UTF_8));
+
+      InputStream stream = new ByteArrayInputStream(Files.readAllBytes(utfFile));
+      NamedStreamable.InputStreamWrapper iStreamWrapper = new NamedStreamable.InputStreamWrapper(stream);
+      MerkleNode res = ipfs.add(iStreamWrapper).get(0);
+
+      Files.delete(utfFile);
+
+      return res.hash.toBase58();
+    } catch (Exception exc) {
+      throw new RuntimeException(exc.getMessage());
+    }
   }
 
   @Override
   public byte[] getItem(String hash) {
-    // TODO Auto-generated method stub
-    return null;
+    try {
+      Multihash multihash = Multihash.fromBase58(hash);
+      return ipfs.cat(multihash);
+    } catch (Exception exc) {
+      throw new RuntimeException(exc.getMessage());
+    }
+  }
+
+  private String mapToString(Map<String, Object> map) {
+    return map
+      .keySet()
+      .stream()
+      .map(key -> String.format("\"%s\":", key) + " " + map.get(key))
+      .collect(Collectors.joining(", ", "{", "}"));
   }
 }
