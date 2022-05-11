@@ -40,7 +40,7 @@ public class IPFSRestController {
       HttpHeaders headers = new HttpHeaders();
       String hash = service.saveFile(file);
       actualRes.put("CID", hash);
-      actualRes.put("imageURI", String.format("%s/ipfs/%s", baseUrl, hash));
+      actualRes.put("fileURI", String.format("%s/ipfs/%s", baseUrl, hash));
       res.put("response", actualRes);
       headers.add("Content-Type", MediaType.APPLICATION_JSON_VALUE);
       return ResponseEntity.status(HttpStatus.CREATED).headers(headers).body(res);
@@ -63,7 +63,7 @@ public class IPFSRestController {
       HttpHeaders headers = new HttpHeaders();
       String hash = service.saveJson(body);
       actualRes.put("CID", hash);
-      actualRes.put("tokenURI", String.format("%s/ipfs/%s", baseUrl, hash));
+      actualRes.put("itemURI", String.format("%s/ipfs/%s", baseUrl, hash));
       res.put("response", actualRes);
       headers.add("Content-Type", MediaType.APPLICATION_JSON_VALUE);
       return ResponseEntity.status(HttpStatus.CREATED).headers(headers).body(res);
