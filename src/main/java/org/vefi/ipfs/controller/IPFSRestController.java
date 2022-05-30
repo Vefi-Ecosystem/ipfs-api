@@ -28,6 +28,13 @@ public class IPFSRestController {
   @Autowired
   private IPFSService service;
 
+  @GetMapping(value = "/probe/life")
+  public Map<String, Object> getHealth() {
+    Map<String, Object> hMap = new HashMap<>();
+    hMap.put("status", "HEALTHY");
+    return hMap;
+  }
+
   @PostMapping(value = "/file")
   public ResponseEntity<Map<String, Object>> uploadFile(
     @RequestParam("file") MultipartFile file,
